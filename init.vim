@@ -15,7 +15,7 @@ let g:nvim_dflt_indent = 2
 let g:nvim_max_col = 80
 
 let g:sps='/' " abrv for system path separator
-let g:nvim_dir= '~' . g:sps . 'cnfNvimTmux'
+let g:nvim_dir= '~' . g:sps . '.cnfLnx' . g:sps . 'cnfNvimux'
 let g:cnf_dir= g:nvim_dir . g:sps . 'cnfNvim'
 let g:cache_dir = g:nvim_dir . g:sps . 'cache'
 let g:md_wiki = g:nvim_dir . g:sps . 'wiki_md'
