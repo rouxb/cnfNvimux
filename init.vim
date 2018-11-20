@@ -499,10 +499,21 @@ call dein#add('justinmk/vim-sneak')
 
 """ Awesome grep {{{
 call dein#add('brooth/far.vim')
+" Use ag grepper if present {{{
+call system('whereis ag')
+if v:shell_error == 0
+	if (has('nvim') && has('python3'))
+		let g:far#source='agnvim'
+	else
+		let g:far#source='ag'
+	endif
+else
+		let g:far#source='vimgrep'
+endif " }}}
 """ }}}
 
 """ Compilation {{{
-" call dein#add('vim-accio')
+" call dein#add('vim-accio') TODO
 """ }}}
 
 """ Directory navigation and status {{{
