@@ -1,7 +1,7 @@
 """ Neovim configuration loader
 " Define global configuration and source user configuration script.
 "
-" NB: this configuration rely on dein to manage plugins. Dein.vim is loade in
+" NB: this configuration rely on dein to manage plugins. Dein.vim is loaded in
 " the git repository as submodule.
 " To force plugins update: `call dein#clear_state()` or `call dein#update()`
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -273,6 +273,9 @@ set guioptions-=e  " Don't use GUI tabline
 " }}}
 """ }}}
 
+""" Tmux seamless navigation {{{
+""" }}}
+
 """ Session management{{{
 call dein#add('mhinz/vim-startify') "{{{
   let g:startify_session_dir = g:cache_dir . g:sps . 'sessions'
@@ -329,6 +332,7 @@ call init#SourceSubCnf('bfrMgmt.vim')
 " Markdown docs {{{
 call init#EnsureExists(g:md_wiki)
 call dein#add('plasticboy/vim-markdown')
+call dein#add('sidOfc/mkdx')
 " }}}
 
 " Latex docs {{{
@@ -351,7 +355,22 @@ augroup END " }}}
 
 """ Git tools {{{
 call dein#add('tpope/vim-fugitive')
-call dein#add('airblade/vim-gitgutter')
+call dein#add('airblade/vim-gitgutter') " {{{
+  let g:gitgutter_map_keys = 0 " disable gitgutter key maps
+  let g:gitgutter_max_signs = 300  " disable threashold
+  let g:lmap.g = { 'name' : '+GitGutter'}
+  " Hunk management
+  nmap <Leader>gs <Plug>GitGutterStageHunk
+  nmap <Leader>gr <Plug>GitGutterRevertHunk
+  nmap <Leader>gp <Plug>GitGutterPreviewHunk
+  " Hunk navigation
+  nmap ]g <Plug>GitGutterNextHunk
+  nmap [g <Plug>GitGutterPrevHunk
+  " GitGutter options toggle
+  nmap <Leader>gl :GitGutterLineHighlightsToggle<CR>
+  nmap <Leader>gs :GitGutterSignsToggle<CR>
+  nmap <Leader>gg :GitGutterToggle<CR>
+" }}}
 """ }}}
 
 """ fast navigation {{{
