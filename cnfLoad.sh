@@ -3,7 +3,7 @@ SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 ### NVim config
 nvim_config=$SCRIPTPATH/init.vim
-nvim_trgt_path=~/.config/init.vim
+nvim_trgt_path=~/.config/nvim/init.vim
 vim_trgt_path=~/.vimrc
 ln -i -s $nvim_config $nvim_trgt_path
 
