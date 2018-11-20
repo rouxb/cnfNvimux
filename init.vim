@@ -273,7 +273,23 @@ set guioptions-=e  " Don't use GUI tabline
 " }}}
 """ }}}
 
-""" Tmux seamless navigation {{{
+""" Tmux association {{{
+call dein#add('christoomey/vim-tmux-navigator') " {{{
+  let g:tmux_navigator_save_on_switch = 1
+" }}}
+call dein#add('benmills/vimux') " {{{
+  let g:lmap.v = { 'name' : '+Vimux'}
+  nmap <Leader>vp :VimuxPromptCommand<CR>
+  nmap <Leader>vl :VimuxRunLastCommand<CR>
+  nmap <Leader>vi :VimuxInspectRunner<CR>
+  nmap <Leader>vk :VimuxCloseRunner<CR>
+  nmap <Leader>vc :VimuxInterruptRunner<CR>
+" }}}
+augroup tmuxMgmtAutocmd "{{{
+  autocmd!
+  autocmd VimResized * :wincmd =
+augroup END
+" }}}
 """ }}}
 
 """ Session management{{{
@@ -312,6 +328,7 @@ endfunction"}}}
   let g:lmap.s.l = ['init#LoadSession()', 'load-sessions']
   let g:lmap.s.c = ['SClose', 'close-sessions']
   let g:lmap.s.d = ['SDelete', 'delete-sessions']
+  let g:lmap.s.h = ['Startify', 'dsp-home']
 " }}}
 augroup sessionsMgmtAutocmd "{{{
   autocmd!
@@ -321,11 +338,88 @@ augroup END
 """ }}}
 
 """ Tabs management {{{
-call init#SourceSubCnf('tabsMgmt.vim')
+" history and state vars {{{
+let g:prvTab = 1
+let g:curTab = 1
+let t:tabZoomed = 0
+" }}}
+function! init#ToggleZoom() "{{{
+  if t:tabZoomed == 1
+    exec t:zoom_winrestcmd
+    let t:tabZoomed = 0
+  else
+    let t:zoom_winrestcmd = winrestcmd()
+    resize
+    vertical resize
+    let t:tabZoomed = 1
+  endif
+endfunction "}}}
+function! init#ToggleTab() "{{{
+  execute 'tabnext ' . g:prvTab
+endfunction "}}}
+function! init#UpdtTabHistory() "{{{
+  "update history
+  let g:prvTab = g:curTab
+  let g:curTab = tabpagenr()
+endfunction "}}}
+" Custom remap {{{
+  command! TabsZoomToggle call init#ToggleZoom()
+  nnoremap <C-z> :TabsZoomToggle <CR>
+  command! TabsToggle call init#ToggleTab()
+  nnoremap g<C-I> :TabsToggle <CR>
+  let g:lmap.t = { 'name' : '+Tabs'}
+  let g:lmap.t.n = ['tabnew', 'new-tab']
+  let g:lmap.t.h = ['-tabmove', 'mv-tab-left']
+  let g:lmap.t.l = ['tabmove', 'mv-tab-right']
+  let g:lmap.t.z = ['call init#ToggleZoom()', 'zoom-toggle']
+  let g:lmap.t['<C-I>'] = ['call init#ToggleTab()', 'toggle-tab']
+  let g:lmap.t.c = ['tabclose', 'close-tab']
+" }}}
+augroup tabsMgmtAutocmd "{{{
+  autocmd!
+  autocmd TabEnter * call init#UpdtTabHistory()
+augroup END
+" }}}
 """  }}}
 
 """ Buffer management {{{
-call init#SourceSubCnf('bfrMgmt.vim')
+function! init#SetNumberDisplay() "{{{
+" Varies the display of numbers.
+"
+" This is not a 'mode' specific setting, so a simple autocommand won't work.
+" Numbers should not show up in a terminal buffer, regardless of if that
+" buffer is in terminal mode or not.
+  let l:buffername = @%
+  if l:buffername =~ 'term://*'
+    setlocal nonumber
+    setlocal norelativenumber
+  else
+    setlocal number
+    setlocal relativenumber
+  endif
+endfunction "}}}
+augroup BfrWinAutocmd "{{{
+  autocmd!
+" Nvim terminal emulator {{{
+" when in a neovim terminal, add a buffer to the existing vim session
+" instead of nesting (credit justinmk)
+autocmd VimEnter * if !empty($NVIM_LISTEN_ADDRESS) && $NVIM_LISTEN_ADDRESS !=# v:servername
+  \ |let g:r=jobstart(['nc', '-U', $NVIM_LISTEN_ADDRESS],{'rpc':v:true})
+  \ |let g:f=fnameescape(expand('%:p'))
+  \ |noau bwipe
+  \ |call rpcrequest(g:r, "nvim_command", "edit ".g:f)
+  \ |call rpcrequest(g:r, "nvim_command", "call init#SetNumberDisplay()")
+  \ |qa
+  \ |endif
+
+" turn numbers on for normal buffers; turn them off for terminal buffers
+if has('nvim')
+  autocmd TermOpen,BufWinEnter * call init#SetNumberDisplay()
+endif
+"}}}
+augroup END
+" }}}
+let g:lmap.b        = { 'name' : '+Bfr'}
 """ }}}
 
 """ Documentations {{{ 
@@ -344,13 +438,39 @@ call dein#add('chrisbra/csv.vim')
 " }}}
 """ }}}
 
-""" Comments management {{{
-call dein#add('tpope/vim-commentary')
-augroup commentsAutocmd "{{{
+""" Various formater management {{{
+function! init#StatePreserved(command) "{{{
+  " preparation: save last search and cursor position
+  let l:_s = @/
+  let l:l = line(".")
+  let l:c = col(".")
+  " do the business
+  execute a:command
+  " clean up: restore previous search history, and cursor position
+  let @/ = l:_s
+  call cursor(l:l, l:c)
+endfunction "}}}
+call dein#add('tpope/vim-commentary') " {{{
+augroup commentsAutocmd
   autocmd!
 	autocmd FileType vim setlocal commentstring=\"\ %s
 	autocmd FileType verilog setlocal commentstring=//\ %s
 augroup END " }}}
+call dein#add('godlygeek/tabular') " {{{
+let g:lmap.b.a      = { 'name' : '+Align'}
+let g:lmap.b.a['|'] = [ 'Tabularize /|', 'align |']
+let g:lmap.b.a['='] = [ 'Tabularize /= ', 'align = ']
+let g:lmap.b.a[':'] = [ 'Tabularize /:', 'align :']
+let g:lmap.b.a[','] = [ 'Tabularize /,', 'align ,']
+let g:lmap.b.a[';'] = [ 'Tabularize /;', 'align ;']
+" }}}
+command! StripTrailingSpace call init#StatePreserved("%s/\\s\\+$//e")
+nnoremap <leader>bs :StripTrailingSpace<CR>
+""" }}}
+
+""" Tagbar{{{
+call dein#add('majutsushi/tagbar')
+nmap <leader>bt :TagbarToggle<CR>
 """ }}}
 
 """ Git tools {{{
@@ -386,11 +506,12 @@ call dein#add('brooth/far.vim')
 """ }}}
 
 """ Directory navigation and status {{{
-" call dein#add('vim-dirvish')
+" call dein#add('vim-dirvish') TODO
 """ }}}
 
 """ Neoterm management on tabs basis {{{
 call dein#add('Shougo/deol.nvim')
+nnoremap <c-t>f :Deol <CR>
 """ }}}
 
 """ Dark powered find and completion {{{
