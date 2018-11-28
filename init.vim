@@ -488,7 +488,7 @@ call dein#add('airblade/vim-gitgutter') " {{{
   nmap [g <Plug>GitGutterPrevHunk
   " GitGutter options toggle
   nmap <Leader>gl :GitGutterLineHighlightsToggle<CR>
-  nmap <Leader>gs :GitGutterSignsToggle<CR>
+  nmap <Leader>gd :GitGutterSignsToggle<CR>
   nmap <Leader>gg :GitGutterToggle<CR>
 " }}}
 """ }}}
