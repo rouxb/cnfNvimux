@@ -426,7 +426,16 @@ let g:lmap.b        = { 'name' : '+Bfr'}
 " Markdown docs {{{
 call init#EnsureExists(g:md_wiki)
 call dein#add('plasticboy/vim-markdown')
-call dein#add('sidOfc/mkdx')
+" call dein#add('sidOfc/mkdx') " {{{
+"   let g:mkdx#settings  = { 'map': { 'enable': 0},
+"                   \'highlight': { 'enable': 1 },
+"                   \ 'enter': { 'shift': 1 },
+"                   \ 'links': { 'external': { 'enable': 1 } },
+"                   \ 'toc': { 'text': 'Table of Contents', 'update_on_write': 1 },
+"                   \ 'fold': { 'enable': 1 } }
+
+"   let g:lmap.m = { 'name' : '+Mkdx'}
+" " }}}
 " }}}
 
 " Latex docs {{{
@@ -455,14 +464,18 @@ augroup commentsAutocmd
   autocmd!
 	autocmd FileType vim setlocal commentstring=\"\ %s
 	autocmd FileType verilog setlocal commentstring=//\ %s
+	autocmd FileType systemverilog setlocal commentstring=//\ %s
+	autocmd FileType cmake setlocal commentstring=#\ %s
+	autocmd FileType c setlocal commentstring=//\ %s
+	autocmd FileType cpp setlocal commentstring=//\ %s
 augroup END " }}}
 call dein#add('godlygeek/tabular') " {{{
 let g:lmap.b.a      = { 'name' : '+Align'}
-let g:lmap.b.a['|'] = [ 'Tabularize /|', 'align |']
-let g:lmap.b.a['='] = [ 'Tabularize /= ', 'align = ']
-let g:lmap.b.a[':'] = [ 'Tabularize /:', 'align :']
-let g:lmap.b.a[','] = [ 'Tabularize /,', 'align ,']
-let g:lmap.b.a[';'] = [ 'Tabularize /;', 'align ;']
+let g:lmap.b.a['|'] = [ 'Tabularize/|', 'align |']
+let g:lmap.b.a['='] = [ 'Tabularize/=', 'align =']
+let g:lmap.b.a[':'] = [ 'Tabularize/:', 'align :']
+let g:lmap.b.a[','] = [ 'Tabularize/,', 'align ,']
+let g:lmap.b.a[';'] = [ 'Tabularize/;', 'align ;']
 " }}}
 command! StripTrailingSpace call init#StatePreserved("%s/\\s\\+$//e")
 nnoremap <leader>bs :StripTrailingSpace<CR>
