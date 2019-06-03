@@ -465,6 +465,7 @@ augroup commentsAutocmd
 	autocmd FileType vim setlocal commentstring=\"\ %s
 	autocmd FileType verilog setlocal commentstring=//\ %s
 	autocmd FileType systemverilog setlocal commentstring=//\ %s
+	autocmd FileType vhdl setlocal commentstring=--\ %s
 	autocmd FileType cmake setlocal commentstring=#\ %s
 	autocmd FileType c setlocal commentstring=//\ %s
 	autocmd FileType cpp setlocal commentstring=//\ %s
