@@ -341,7 +341,6 @@ augroup END
 " history and state vars {{{
 let g:prvTab = 1
 let g:curTab = 1
-let t:tabZoomed = 0
 " }}}
 function! init#ToggleZoom() "{{{
   if t:tabZoomed == 1
@@ -378,6 +377,7 @@ endfunction "}}}
 augroup tabsMgmtAutocmd "{{{
   autocmd!
   autocmd TabEnter * call init#UpdtTabHistory()
+  autocmd TabNew * let t:tabZoomed = 0
 augroup END
 " }}}
 """  }}}
