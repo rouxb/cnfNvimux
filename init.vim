@@ -496,7 +496,7 @@ call dein#add('airblade/vim-gitgutter') " {{{
   let g:lmap.g = { 'name' : '+GitGutter'}
   " Hunk management
   nmap <Leader>gs <Plug>GitGutterStageHunk
-  nmap <Leader>gr <Plug>GitGutterRevertHunk
+  nmap <Leader>gr <Plug>GitGutterUndoHunk
   nmap <Leader>gp <Plug>GitGutterPreviewHunk
   " Hunk navigation
   nmap ]g <Plug>GitGutterNextHunk
