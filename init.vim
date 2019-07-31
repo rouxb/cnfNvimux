@@ -427,6 +427,11 @@ let g:lmap.b        = { 'name' : '+Bfr'}
 " Markdown docs {{{
 call init#EnsureExists(g:md_wiki)
 call dein#add('plasticboy/vim-markdown')
+" For first install plugin, then use simple cmd for correct load
+" call dein#add('iamcco/markdown-preview.nvim', {'on_ft': ['mardown', 'pandoc.mardown', 'rmd'], 'build': 'cd app & npm install' })
+call dein#add('iamcco/markdown-preview.nvim')
+" let g:mkdp_browser = 'qutebrowser'
+let g:mkdp_echo_preview_url = 1
 " call dein#add('sidOfc/mkdx') " {{{
 "   let g:mkdx#settings  = { 'map': { 'enable': 0},
 "                   \'highlight': { 'enable': 1 },
@@ -445,6 +450,9 @@ call init#EnsureExists(g:tex_wiki)
 
 " CSV file format {{{
 call dein#add('chrisbra/csv.vim')
+" }}}
+" Grammar checking {{{
+call dein#add('rhysd/vim-grammarous')
 " }}}
 """ }}}
 
